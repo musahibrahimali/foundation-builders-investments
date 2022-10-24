@@ -1,0 +1,25 @@
+{
+  "title": "Foundation Builders Investments | Providing easy means for financial freedom",
+  "titleTemplate": "%s - Foundation Builders Investments",
+  "description": "Providing easy means for financial freedom",
+  "openGraph": {
+    "title": "Providing easy means for financial freedom",
+    "description": "Providing easy means for financial freedom",
+    "type": "website",
+    "url": "https://nextjs.org/commerce",
+    "site_name": "Foundation Builders Investments",
+    "images": [
+      {
+        "url": "/icon-19.png",
+        "width": "800",
+        "height": "600",
+        "alt": "Foundation Builders Investments"
+      }
+    ]
+  },
+  "twitter": {
+    "handle": "@foundation_builders_investments",
+    "site": "@foundation_builders_investments",
+    "cardType": "foundation_builders_investments"
+  }
+}

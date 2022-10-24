@@ -1,0 +1,22 @@
+{
+  "name": "Foundation Builders Investments",
+  "short_name": "Foundation Builders Investments",
+  "description": "Providing easy means for financial freedom",
+  "display": "standalone",
+  "start_url": "/",
+  "theme_color": "#fff",
+  "background_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
