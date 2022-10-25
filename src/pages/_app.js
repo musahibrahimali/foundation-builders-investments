@@ -1,7 +1,7 @@
 import React from 'react';
 import { SessionProvider } from "next-auth/react"
 import PropTypes from 'prop-types';
-import SeoHead from '../components/common/head/Head';
+import { SeoHead } from '../components/common/head';
 import '../styles/globals.css';
 import 'tailwindcss/tailwind.css';
 
