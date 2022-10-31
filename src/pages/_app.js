@@ -1,7 +1,8 @@
 import React from 'react';
-import { SessionProvider } from "next-auth/react"
 import PropTypes from 'prop-types';
 import { SeoHead } from '../components/common/Head';
+import { Provider } from 'react-redux';
+import { store } from "../lib/provider";
 import '../styles/globals.css';
 import 'tailwindcss/tailwind.css';
 
@@ -22,12 +23,12 @@ const MyApp = (props) => {
 
   return (
     <React.Fragment>
-      <SessionProvider session={session}>
-        <SeoHead />
+      <SeoHead />
+      <Provider store={store}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </SessionProvider>
+      </Provider>
     </React.Fragment>
   );
 }

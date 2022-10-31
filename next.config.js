@@ -2,6 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+
+  images: {
+    domains: [
+      'res.cloudinary.com',
+      "www.gravatar.com",
+    ],
+  },
 }
 
 module.exports = nextConfig

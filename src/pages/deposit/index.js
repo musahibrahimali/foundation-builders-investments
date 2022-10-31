@@ -1,45 +1,69 @@
-import React from 'react';
-import { MainLayout, InvestmentPlanSection, DepositModal } from "../../components";
-import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import { setCookie, removeCookie } from '../../lib/provider';
+import { MainLayout, InvestmentPlanSection } from "../../components";
 import { usePaystackPayment } from 'react-paystack';
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import axios from 'axios';
 
-const depositMoney = async (amount) => {
+const depositMoney = async (amount, user) => {
     const values = {
-        email: session?.user?.email,
+        email: user?.email,
         amount: amount,
     }
-    const options = {
-        method: "POST",
+
+    const response = await axios({
+        url: `${process.env.NEXT_PUBLIC_DEPOSIT}/${user?._id}`,
+        method: "Post",
+        withCredentials: true,
         headers: {
-            'Content-Type': 'application/json'
+            "Accept": "application/json",
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
         },
-        body: JSON.stringify(values),
+        data: JSON.stringify(values)
+    });
+    if (response) {
+        return true;
     }
-    return await fetch('http://localhost:3000/api/auth/deposit', options)
-        .then(res => res.json())
-        .then((data) => {
-            // console.log("some data returned ", data.data)
-            if (data) {
-                return true;
-            }
-            return false;
-        })
+    return false;
+}
+
+const inCreaseBalance = async (amount, user) => {
+    const values = {
+        amount: amount,
+    }
+
+    const response = await axios({
+        url: `${process.env.NEXT_PUBLIC_BALANCE}/${user?._id}`,
+        method: "Post",
+        withCredentials: true,
+        headers: {
+            "Accept": "application/json",
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+        },
+        data: JSON.stringify(values)
+    });
+    if (response) {
+        return true;
+    }
+    return false;
 }
 
 
 const PaystackHook = (props) => {
     const {
-        email,
+        user,
         currency,
         amount,
     } = props;
-
+    const [error, setError] = useState(false);
     const router = useRouter();
 
     const config = {
         reference: (new Date()).getTime().toString(),
-        email: email,
+        email: user?.email,
         amount: amount * 100,
         currency: currency,
         publicKey: process.env.NEXT_PUBLIC_PAYSTACT_PUBLIC_KEY,
@@ -47,9 +71,12 @@ const PaystackHook = (props) => {
 
     const onSuccess = (reference) => {
         console.log(reference);
-        const response = depositMoney(amount);
-        if (response) {
-            router.push('/');
+        const balance = inCreaseBalance(amount, user);
+        if (balance) {
+            const response = depositMoney(amount, user);
+            if (response) {
+                router.push('/');
+            }
         }
     };
 
@@ -58,10 +85,35 @@ const PaystackHook = (props) => {
     }
 
     const initializePayment = usePaystackPayment(config);
+
     return (
         <div>
+            {
+                error &&
+                <div className="absolute top-0 left-0 right-0 z-50 h-screen w-screen flex flex-col justify-center items-center bg-white bg-opacity-80" role="alert">
+                    <div className="flex flex-col justify-center items-center bg-white px-8 py-4 shadow-lg rounded-md">
+                        <h1 className='text-blue-400 font-extrabold uppercase text-lg md:text-xl lg:text-2xl'>
+                            Please Login
+                        </h1>
+                        <div className="my-4 w-10 h-[1px] bg-red-500"></div>
+                        <p className='text-gray-700 text-lg md:text-xl lg:text-4xl'>
+                            You must be logged in <br /> to make a deposit.
+                        </p>
+                        <button onClick={() => {
+                            setError(false);
+                            router.push('/login');
+                        }} className='bg-blue-400 py-2 px-4 mt-4 text-white font-bold rounded-lg shadow-md'>
+                            continue
+                        </button>
+                    </div>
+                </div>
+            }
             <button className='text-white bg-blue-500 px-8 py-2 rounded-md hover:border-gray-100 hover:text-gray-600 hover:bg-transparent focus:border-none font-bold uppercase border border-transparent' onClick={() => {
-                initializePayment(onSuccess, onClose)
+                if (user) {
+                    initializePayment(onSuccess, onClose)
+                } else {
+                    setError(true);
+                }
             }}>
                 Deposit
             </button>
@@ -69,9 +121,25 @@ const PaystackHook = (props) => {
     );
 };
 
-const Deposit = () => {
+const Deposit = (props) => {
 
-    const { data: session } = useSession();
+    const { cookie } = props;
+    // create an instance of dispatch to pass to the footer
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.user);
+
+    useEffect(() => {
+        // console.log('cookie', cookie);
+        const handleIsCookie = () => {
+            if (cookie) {
+                dispatch(setCookie(true));
+            } else {
+                dispatch(removeCookie(false));
+            }
+        }
+        handleIsCookie();
+    }, [cookie, dispatch]);
+
     const [amount, setAmount] = React.useState(100);
 
     const onSubmit = (e) => {
@@ -95,7 +163,7 @@ const Deposit = () => {
                         <p
                             className='bg-gray-400 px-12 py-2 my-2 rounded-md text-sm md:text-base lg:text-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                         >
-                            {session?.user?.email}
+                            {user?.email}
                         </p>
                         <div className="flex bg-gray-100 px-2 py-2 my-1 rounded-md text-sm md:text-base lg:text-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <span className='mr-2 text-sm md:text-base lg:text-lg'>
@@ -110,9 +178,9 @@ const Deposit = () => {
                             />
                         </div>
                         <PaystackHook
-                            email={session?.user?.email}
                             currency="GHS"
                             amount={amount}
+                            user={user}
                         />
                     </div>
                 </div>
@@ -121,6 +189,21 @@ const Deposit = () => {
             <InvestmentPlanSection />
         </React.Fragment>
     );
+}
+
+// get serverside props (this returns the api key)
+export const getServerSideProps = async ({ req }) => {
+    let user = false;
+    const cookie = req.cookies['access_token'];
+    if (cookie !== undefined) {
+        user = true;
+    }
+
+    return {
+        props: {
+            cookie: user,
+        }
+    }
 }
 
 Deposit.Layout = MainLayout;

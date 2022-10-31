@@ -1,16 +1,24 @@
 import React from 'react';
-import {MainLayout} from "../components/";
+import { MainLayout } from "../components";
+import Link from 'next/link';
 
 const NotFound = () => {
     return (
         <React.Fragment>
-            <div className="max-w-2xl mx-8 sm:mx-auto py-20 flex flex-col items-center justify-center fit">
-                <h1 className="">
-                    Not Found
-                </h1>
-                <p className="">
-                    The requested page doesn&apos;t exist or you don&apos;t have access to it.
-                </p>
+            <div className="flex h-full w-full bg-error-bg px-4 py-24 flex-col justify-center items-center">
+                <div className='w-full h-full bg-transparent flex flex-col items-center justify-center'>
+                    <h1 className='error-text font-sans text-white border-gray-400'>
+                        404
+                    </h1>
+                    <p className="text-white font-sans pb-8 md:text-4xl">
+                        Ooops!!! You seem lost.
+                    </p>
+                    <Link href="/">
+                        <a className="px-8 py-2 border border-gray-100 font-sans text-white bg-transparent hover:bg-white hover:text-error-bg">
+                            Go Back to the home page
+                        </a>
+                    </Link>
+                </div>
             </div>
         </React.Fragment>
     );

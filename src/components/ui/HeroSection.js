@@ -2,11 +2,11 @@ import { HeroImage } from '../../assets/images/index';
 import React from 'react';
 import Image from "next/image";
 import Link from 'next/link';
-import { useSession } from "next-auth/react";
+import { useSelector } from "react-redux";
 
 const HeroSection = () => {
 
-    const { data: session } = useSession();
+    const user = useSelector((state) => state.user.user);
 
     return (
         <React.Fragment>
@@ -30,7 +30,7 @@ const HeroSection = () => {
                             Earnings only on Monday-Friday
                         </p>
                         <div className="flex justify-center">
-                            <Link href={session?.user != null ? "/deposit" : "/login"}>
+                            <Link href={user != null ? "/deposit" : "/login"}>
                                 <a className="inline-flex text-white bg-gray-900 border border-gray-300 py-4 hover:border-transparent shadow-md px-20 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                                     Start Making Profit
                                 </a>

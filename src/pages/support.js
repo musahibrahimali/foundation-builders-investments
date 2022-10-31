@@ -1,5 +1,5 @@
 import React from 'react';
-import { MainLayout } from "../components/";
+import { MainLayout } from "../components";
 
 const Support = () => {
     return (
@@ -52,6 +52,21 @@ const Support = () => {
         </React.Fragment>
     );
 };
+
+// get serverside props (this returns the api key)
+export const getServerSideProps = async ({ req }) => {
+    let user = false;
+    const cookie = req.cookies['access_token'];
+    if (cookie !== undefined) {
+        user = true;
+    }
+
+    return {
+        props: {
+            cookie: user,
+        }
+    }
+}
 
 Support.Layout = MainLayout;
 

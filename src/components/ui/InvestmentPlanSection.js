@@ -1,11 +1,10 @@
 import React from 'react';
 import { InvestmentCard } from "../widgets";
 import Link from 'next/link';
-import { useSession } from "next-auth/react";
 
 const InvestmentPlanSection = () => {
 
-    const { data: session } = useSession();
+    const user = false;
 
     return (
         <React.Fragment>
@@ -48,14 +47,14 @@ const InvestmentPlanSection = () => {
                         />
                     </div>
                     {
-                        !session?.user && <div className="flex flex-col md:flex-row w-full justify-center items-center space-y-4 md:space-x-8">
+                        !user && <div className="flex flex-col md:flex-row w-full justify-center items-center space-y-4 md:space-x-8 mt-10">
                             <Link href='/register'>
-                                <a className="bg-blue-800 md:w-[250px] text-center lg:w-[400px] bg-opacity-50 transition-all duration-150 text-white font-bold hover:bg-opacity-100 uppercase text-lg md:text-xl lg:text-2xl border border-light-blue py-2 px-4 rounded mt-10">
+                                <a className="bg-blue-800 md:w-[250px] text-center lg:w-[400px] bg-opacity-50 transition-all duration-150 text-white font-bold hover:bg-opacity-100 uppercase text-lg md:text-xl lg:text-2xl border border-light-blue py-2 px-4 rounded">
                                     Create an account
                                 </a>
                             </Link>
                             <Link href='/login'>
-                                <a className="bg-transparent md:w-[250px] text-center lg:w-[400px] hover:bg-light-blue border border-light-blue uppercase text-lg md:text-xl lg:text-2xl w-44 text-white font-bold py-2 px-4 rounded mt-10">
+                                <a className="bg-transparent md:w-[250px] text-center lg:w-[400px] hover:bg-light-blue border border-light-blue uppercase text-lg md:text-xl lg:text-2xl w-44 text-white font-bold py-2 px-4 rounded">
                                     Login
                                 </a>
                             </Link>

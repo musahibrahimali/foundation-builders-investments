@@ -3,12 +3,44 @@ import Image from "next/image";
 import { Logo } from "../../../assets/images";
 import MenuItem from "./MenuItem";
 import Link from 'next/link';
-import { useSession } from "next-auth/react";
-import MobileNav from './MobileNav';
+import { useQuery } from 'react-query';
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../../lib/provider";
+import axios from 'axios';
+
+
+// fetch user details
+const fetchUserProfile = async () => {
+    return await axios({
+        url: process.env.NEXT_PUBLIC_PROFILE,
+        method: "GET",
+        withCredentials: true,
+        headers: {
+            "Accept": "application/json",
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+        },
+    });
+}
 
 const MainHeader = () => {
 
-    const { data: session } = useSession();
+    const dispatch = useDispatch();
+    const isCookie = useSelector((state) => state.cookie.isCookie);
+    const user = useSelector((state) => state.user.user);
+
+    const { data } = useQuery(
+        'user',
+        fetchUserProfile,
+        {
+            keepPreviousData: true,
+            enabled: !!isCookie,
+        }
+    );
+
+    if (data) {
+        dispatch(setUser(data.data));
+    }
 
     return (
         <React.Fragment>
@@ -21,18 +53,18 @@ const MainHeader = () => {
                     </Link>
                     <nav className="md:ml-auto flex flex-row md:flex flex-wrap items-center text-base justify-center">
                         <MenuItem title="Support" url="/support" />
-                        {session?.user && <MenuItem title="Deposit" url="/deposit" />}
-                        {session?.user && <MenuItem title="Profile" url="/profile" />}
+                        {user && <MenuItem title="Deposit" url="/deposit" />}
+                        {user && <MenuItem title="Profile" url="/profile" />}
                     </nav>
                     {
-                        !session?.user && <Link href="/login">
+                        !user && <Link href="/login">
                             <a className="md:inline-flex justify-center transition-all duration-150 items-center bg-blue-600 text-white uppercase font-bold border-0 py-1 md:py-2 px-2 md:px-6 md:mr-4 focus:outline-none hover:bg-transparent hover:text-gray-700 hover:border hover:border-gray-100 rounded text-base mt-5 md:mt-0">
                                 login
                             </a>
                         </Link>
                     }
                     {
-                        !session?.user && <Link href='/register'>
+                        !user && <Link href='/register'>
                             <a className="flex md:inline-flex transition-all duration-150 items-center bg-light-blue text-gray-50 uppercase font-bold border py-1 md:py-2 px-2 md:px-3 focus:outline-none hover:bg-blue-600 hover:bg-transparent hover:text-white hover:border border-gray-100 hover:border-transparent rounded text-base mt-5 md:mt-0">
                                 sign up
                             </a>

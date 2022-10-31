@@ -24,6 +24,7 @@ module.exports = {
         'error-bg': '#007aff',
         'deep-yellow': "#FA8A00",
         'light-blue': "#03A9F4",
+
       },
       /* background image */
       backgroundImage: () => ({
